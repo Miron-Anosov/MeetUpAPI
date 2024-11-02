@@ -206,3 +206,9 @@ class Headers:
     X_CACHE_MISS = "MISS"
     X_CACHE_HIT = "HIT"
     IF_NONE_MATCH = "if-none-match"
+
+
+class Prefix:
+    """Prefix."""
+
+    API = "/api"
