@@ -4,7 +4,7 @@ import pydantic
 
 
 class Status(pydantic.BaseModel):
-    """**Movel validate response status  /tweets /users**.
+    """**Movel validate response status **.
 
     - `result`: bool : Successful or unsuccessful.
 
