@@ -1,0 +1,38 @@
+
+services:
+
+  db:
+    image: postgis/postgis:17-3.5
+    container_name: ${CONTAINER_NAME_DB}
+    restart: always
+    ports:
+      - ${POSTGRES_PORT}:5432
+    volumes:
+      - volume_postgres_data:/var/lib/postgresql/data
+      - volume_postgres_logs:/logs_postgres
+    shm_size: 256mb
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_MAX_CONNECTIONS=200
+    command:
+      - --log_destination=stderr
+      - --logging_collector=on
+      - --log_directory=./logs_postgres/
+      - --max_connections=${MAX_CONNECTION}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+
+
+volumes:
+  volume_postgres_data:
+    name: ${POSTGRES_DATA_VOLUME}
+  volume_postgres_logs:
+    name: ${POSTGRES_LOGS_VOLUME}
+

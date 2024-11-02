@@ -1,11 +1,8 @@
 """Common Raise HTTPException."""
 
-import uuid
-from typing import Optional
-
 from fastapi import HTTPException, status
 
-from src.core.settings.constants import MessageError, Headers
+from src.core.settings.constants import Headers, MessageError
 from src.core.validators.error import ErrorMessage
 
 
@@ -69,6 +66,7 @@ def valid_password_or_error_422(pwd: str, pwd2: str) -> None:
             error_type=MessageError.INVALID_ID_ERR,
             error_message=MessageError.INVALID_ID_ERR_MESSAGE,
         )
+
 
 def raise_http_401(
     status_code: int = status.HTTP_401_UNAUTHORIZED,

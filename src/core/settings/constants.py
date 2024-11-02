@@ -1,4 +1,7 @@
-"""Constants"""
+"""Constants."""
+
+from pathlib import Path
+
 from fastapi import status
 
 
@@ -16,7 +19,6 @@ class DetailError:
             }
         }
     }
-
 
 
 class ResponseError:
@@ -50,8 +52,7 @@ class ResponseError:
     }
 
 
-
-class HTTPResponseNewUser:
+class HTTPResponseClients:
     """Swagger Docs."""
 
     responses = dict()
@@ -65,6 +66,22 @@ class HTTPResponseNewUser:
     responses[status.HTTP_400_BAD_REQUEST] = ResponseError.RESPONSES.get(
         status.HTTP_400_BAD_REQUEST
     )
+
+
+class HTTPResponseAuthClients:
+    """Swagger Docs."""
+
+    responses = dict()
+    responses[status.HTTP_401_UNAUTHORIZED] = ResponseError.RESPONSES.get(
+        status.HTTP_401_UNAUTHORIZED
+    )
+    responses[status.HTTP_500_INTERNAL_SERVER_ERROR] = (
+        ResponseError.RESPONSES.get(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    )
+    responses[status.HTTP_422_UNPROCESSABLE_ENTITY] = (
+        ResponseError.RESPONSES.get(status.HTTP_422_UNPROCESSABLE_ENTITY)
+    )
+
 
 class Response500:
     """Swagger Docs."""
@@ -87,7 +104,6 @@ class ResponsesAuthUser:
     )
 
 
-
 class MimeTypes:
     """МIME types constants."""
 
@@ -99,14 +115,14 @@ class ClientsRouts:
 
     TAG = "Clients"
     CREATE_CLIENT_PATH = "/clients/create"
-    MACH_POST_PATH = "/clients/{id}/match"
+    MATCH_POST_PATH = "/clients/{id}/match"
 
 
 class AllClientsRoutes:
     """All clients routes."""
+
     TAG = "AllClients"
     ALL_CLIENTS = "/list"
-
 
 
 class MessageError:
@@ -135,19 +151,20 @@ class MessageError:
 
 class H3Index:
     """H3 Index constants."""
-    TABLE_NAME = 'locations'
-    GEOMETRY_TYPE = 'POINT'
+
+    TABLE_NAME = "locations"
+    GEOMETRY_TYPE = "POINT"
     SRID = 4326
-    POSTGRESQL_INDEX_TYPE = 'gist'
-    POSTGRESQL_GEOGRAPHY_OPS = 'geography_ops'
+    POSTGRESQL_INDEX_TYPE = "gist"
+    POSTGRESQL_GEOGRAPHY_OPS = "geography_ops"
     H3_RESOLUTION_MIN = 4
     H3_RESOLUTION_MAX = 8
 
-    FIELD_ID = 'id'
-    FIELD_CREATOR = 'creator'
-    FIELD_LOCATION = 'location'
-    FIELD_LATITUDE = 'latitude'
-    FIELD_LONGITUDE = 'longitude'
+    FIELD_ID = "id"
+    FIELD_CREATOR = "creator"
+    FIELD_LOCATION = "location"
+    FIELD_LATITUDE = "latitude"
+    FIELD_LONGITUDE = "longitude"
     H3_RESOLUTION_8 = 8
     H3_RESOLUTION_7 = 7
     H3_RESOLUTION_6 = 6
@@ -161,6 +178,7 @@ class H3Index:
     H3_MAX_DIAMETER_6 = 40000
     H3_MAX_DIAMETER_5 = 50000
     FIELD_H3_INDEX = "h3_index{}"
+
 
 class JWT:
     """STATIC JWT DATA."""
@@ -184,10 +202,18 @@ class JWT:
 class AuthRoutes:
     """Authorization routes."""
 
-    TAG = "AUTH"
+    TAG = "Authorization"
     LOGIN_PATH = "/auth/login"
     LOGOUT_PATH = "/auth/logout"
     TOKEN_PATH = "/auth/token"
+
+
+class LocationRoutes:
+    """Authorization routes."""
+
+    TAG = "Location"
+    GET_USERS_PATH_BY_AUTH_USER = "/list"
+    GET_CALCULATED_DISTANCE_PATH = "/distance"
 
 
 class Headers:
@@ -212,3 +238,24 @@ class Prefix:
     """Prefix."""
 
     API = "/api"
+
+
+class CommonConfSettings:
+    """Common configurate."""
+
+    ENV_FILE_NAME = ".env"
+    EXTRA_IGNORE = "ignore"
+
+    ENV = Path(__file__).parent.parent.parent.parent / ENV_FILE_NAME
+
+
+class JWTconf:
+    """Conf for settings."""
+
+    ALGORITHM = "RS256"
+    ENV_PREFIX = "JWT_"
+    ACCESS_EXPIRE_MINUTES = 15
+    REFRESH_EXPIRE_DAYS = 30
+    REFERRAL_EXPIRE_DAYS = 100
+    PRIVATE_KEY = "private_key"
+    PUBLIC_KEY = "public_key"
