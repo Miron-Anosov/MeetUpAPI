@@ -5,7 +5,7 @@ from typing import Optional
 
 from fastapi import HTTPException, status
 
-from src.core.settings.constants import MessageError
+from src.core.settings.constants import MessageError, Headers
 from src.core.validators.error import ErrorMessage
 
 
@@ -69,3 +69,24 @@ def valid_password_or_error_422(pwd: str, pwd2: str) -> None:
             error_type=MessageError.INVALID_ID_ERR,
             error_message=MessageError.INVALID_ID_ERR_MESSAGE,
         )
+
+def raise_http_401(
+    status_code: int = status.HTTP_401_UNAUTHORIZED,
+    error_type: str = MessageError.TYPE_ERROR_INVALID_AUTH,
+    error_message: str = MessageError.INVALID_EMAIL_OR_PWD,
+    headers: dict = Headers.WWW_AUTH_BEARER,
+):
+    """Raise HTTP 401 error with customizable parameters.
+
+    Args:
+        status_code (int): HTTP status code for unauthorized error.
+        error_type (str): Type of authentication error.
+        error_message (str): Error message for invalid credentials.
+        headers (dict): Auth header type, default is Bearer.
+    """
+    raise http_exception(
+        status_code=status_code,
+        error_type=error_type,
+        error_message=error_message,
+        headers=headers,
+    )
