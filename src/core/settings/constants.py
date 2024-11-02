@@ -66,6 +66,13 @@ class HTTPResponseNewUser:
         status.HTTP_400_BAD_REQUEST
     )
 
+class Response500:
+    """Swagger Docs."""
+
+    responses = dict()
+    responses[status.HTTP_500_INTERNAL_SERVER_ERROR] = (
+        ResponseError.RESPONSES.get(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    )
 
 class MimeTypes:
     """МIME types constants."""
@@ -110,3 +117,78 @@ class MessageError:
     MESSAGE_IF_EMAIL_ALREADY_EXIST = (
         "Registration failed. Please check your information."
     )
+
+
+class H3Index:
+    """H3 Index constants."""
+    TABLE_NAME = 'locations'
+    GEOMETRY_TYPE = 'POINT'
+    SRID = 4326
+    POSTGRESQL_INDEX_TYPE = 'gist'
+    POSTGRESQL_GEOGRAPHY_OPS = 'geography_ops'
+    H3_RESOLUTION_MIN = 4
+    H3_RESOLUTION_MAX = 8
+
+    FIELD_ID = 'id'
+    FIELD_CREATOR = 'creator'
+    FIELD_LOCATION = 'location'
+    FIELD_LATITUDE = 'latitude'
+    FIELD_LONGITUDE = 'longitude'
+    H3_RESOLUTION_8 = 8
+    H3_RESOLUTION_7 = 7
+    H3_RESOLUTION_6 = 6
+    H3_RESOLUTION_5 = 5
+    H3_DIAMETER_8 = 461.354684
+    H3_DIAMETER_7 = 1220.629759
+    H3_DIAMETER_6 = 3229.482772
+    H3_DIAMETER_5 = 8544.408276
+    H3_MAX_DIAMETER_8 = 10000
+    H3_MAX_DIAMETER_7 = 20000
+    H3_MAX_DIAMETER_6 = 40000
+    H3_MAX_DIAMETER_5 = 50000
+    FIELD_H3_INDEX = "h3_index{}"
+
+class JWT:
+    """STATIC JWT DATA."""
+
+    DESCRIPTION_PYDANTIC_ACCESS_TOKEN = (
+        "Authorization: Bearer JWT access-token. It'll set at "
+    )
+    DESCRIPTION_PYDANTIC_REFRESH_TOKEN = "Set-cookie: JWT refresh_token"
+    DESCRIPTION_PYDANTIC_TOKEN_TYPE = "Bearer"
+    DESCRIPTION_PYDANTIC_TITLE = "Token"
+    DESCRIPTION_PYDANTIC_EXPIRE_REFRESH = "expires_refresh"
+    PAYLOAD_EXPIRE_KEY = "exp"
+    PAYLOAD_IAT_KEY = "iat"
+    PAYLOAD_SUB_KEY = "sub"
+    PAYLOAD_USERNAME_KEY = "username"
+    TOKEN_TYPE_FIELD = "type"
+    TOKEN_TYPE_ACCESS = "access_token"
+    TOKEN_TYPE_REFRESH = "refresh_token"
+
+
+class AuthRoutes:
+    """Authorization routes."""
+
+    TAG = "AUTH"
+    LOGIN_PATH = "/auth/login"
+    LOGOUT_PATH = "/auth/logout"
+    TOKEN_PATH = "/auth/token"
+
+
+class Headers:
+    """STATIC HEADERS DATA."""
+
+    WWW_AUTH_BEARER = {"WWW-Authenticate": "Bearer"}
+    WWW_AUTH_BEARER_LOGOUT = {"WWW-Authenticate": 'Bearer realm="logout"'}
+    AUTHORIZATION = {"Authorization": ""}
+    WWW_AUTH_BEARER_EXPIRED = {
+        "WWW-Authenticate": 'Bearer realm="Refresh token expired"'
+    }
+    CACHE_CONTROL = "Cache-Control"
+    CACHE_MAX_AGE = "max-age="
+    ETAG = "ETag"
+    X_CACHE = "X-Cache"
+    X_CACHE_MISS = "MISS"
+    X_CACHE_HIT = "HIT"
+    IF_NONE_MATCH = "if-none-match"
