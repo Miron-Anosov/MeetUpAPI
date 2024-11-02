@@ -74,6 +74,20 @@ class Response500:
         ResponseError.RESPONSES.get(status.HTTP_500_INTERNAL_SERVER_ERROR)
     )
 
+
+class ResponsesAuthUser:
+    """Swagger Docs."""
+
+    responses = dict()
+    responses[status.HTTP_401_UNAUTHORIZED] = ResponseError.RESPONSES.get(
+        status.HTTP_401_UNAUTHORIZED
+    )
+    responses[status.HTTP_500_INTERNAL_SERVER_ERROR] = (
+        ResponseError.RESPONSES.get(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    )
+
+
+
 class MimeTypes:
     """МIME types constants."""
 
