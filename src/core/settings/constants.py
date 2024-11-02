@@ -149,7 +149,7 @@ class MessageError:
     )
 
 
-class H3Index:
+class LocationH3:
     """H3 Index constants."""
 
     TABLE_NAME = "locations"
@@ -164,7 +164,9 @@ class H3Index:
     FIELD_CREATOR = "creator"
     FIELD_LOCATION = "location"
     FIELD_LATITUDE = "latitude"
+    FIELD_LATITUDE_INDEX = 0
     FIELD_LONGITUDE = "longitude"
+    FIELD_LONGITUDE_INDEX = 1
     H3_RESOLUTION_8 = 8
     H3_RESOLUTION_7 = 7
     H3_RESOLUTION_6 = 6
@@ -177,7 +179,7 @@ class H3Index:
     H3_MAX_DIAMETER_7 = 20000
     H3_MAX_DIAMETER_6 = 40000
     H3_MAX_DIAMETER_5 = 50000
-    FIELD_H3_INDEX = "h3_index{}"
+    FIELD_H3_INDEX = "h3_index_{}"
 
 
 class JWT:
