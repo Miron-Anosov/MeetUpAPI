@@ -12,6 +12,7 @@ from src.core.controllers.depends.utils.response_errors import (
     raise_400_bad_req,
     valid_password_or_error_422,
 )
+from src.core.controllers.locations import location
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -22,7 +23,16 @@ if TYPE_CHECKING:
 async def new_user(
     crud: Annotated["Crud", Depends(get_crud)],
     session: Annotated["AsyncSession", Depends(get_session)],
-    name: Annotated[
+    first_name: Annotated[
+        str,
+        Form(
+            description="Author's name.",
+            min_length=2,
+            max_length=15,
+            pattern=r"^[a-zA-Z0-9_]+$",
+        ),
+    ],
+    last_name: Annotated[
         str,
         Form(
             description="Author's name.",
@@ -91,6 +101,54 @@ async def new_user(
 
     Returns:
         JSONResponse: Confirmation of user creation or error message
-
     """
-    pass
+    valid_password_or_error_422(pwd=password, pwd2=password_control)
+
+    password_hash: bytes = hash_pwd(password)
+
+    new_uuid = uuid.uuid4().hex
+
+    new_auth = dict(
+        user_id=new_uuid,
+        hashed_password=password_hash.decode(),
+        email=email,
+    )
+
+    new_location = dict(
+        user_id=new_uuid,
+        location=(latitude, longitude),
+    )
+
+    creating_user = dict(
+        id=new_uuid,
+        first_name=first_name,
+        last_name=last_name,
+        sex=sex,
+        avatar_path="",  # TODO gen path
+    )
+
+    try:
+        async with session.begin():
+
+            await crud.users.insert_new_client(
+                session=session,
+                new_user=creating_user,
+            )
+
+            await session.flush()
+
+            await crud.auth.insert_auth_user(
+                session=session,
+                auth_user=new_auth,
+            )
+
+            await crud.locations.insert_location(
+                session=session, location=new_location
+            )
+
+        return True
+    except Exception as e:
+        print(f"Registration failed: {e}")
+        raise_400_bad_req()
+        await session.close()
+        return None
