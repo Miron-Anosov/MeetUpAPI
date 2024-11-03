@@ -23,6 +23,10 @@ geopy = "^2.4.1"
 pyjwt = "^2.9.0"
 geoalchemy2 = "^0.15.2"
 h3 = "^4.1.2"
+pillow = "^11.0.0"
+aiobotocore = "^2.15.2"
+aiofiles = "^24.1.0"
+
 
 
 [tool.poetry.group.dev.dependencies]
@@ -31,6 +35,7 @@ black = "^24.10.0"
 isort = "^5.13.2"
 flake8 = "^7.1.1"
 pre-commit = "^4.0.1"
+types-aiofiles = "^24.1.0.20240626"
 
 
 [tool.black]

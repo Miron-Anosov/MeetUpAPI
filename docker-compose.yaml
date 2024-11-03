@@ -26,7 +26,32 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    networks:
+      - api_net
 
+
+  redis:
+    image: redis:7.4-alpine
+    container_name: ${CONTAINER_NAME_REDIS}
+    restart: always
+    command: >
+      redis-server
+      --requirepass ${REDIS_PASSWORD}
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      - REDIS_TIMEOUT=${REDIS_TIMEOUT}
+      - REDIS_LOGLEVEL=${REDIS_LOGLEVEL}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    ports:
+      - ${REDIS_PORT}:6379
+    volumes:
+      - volume_redis_data:/data
+    networks:
+      - api_net
 
 
 
@@ -35,4 +60,10 @@ volumes:
     name: ${POSTGRES_DATA_VOLUME}
   volume_postgres_logs:
     name: ${POSTGRES_LOGS_VOLUME}
+  volume_redis_data:
+    name: ${REDIS_VOLUME}
 
+
+networks:
+  api_net:
+    driver: bridge

@@ -118,13 +118,6 @@ class ClientsRouts:
     MATCH_POST_PATH = "/clients/{id}/match"
 
 
-class AllClientsRoutes:
-    """All clients routes."""
-
-    TAG = "AllClients"
-    ALL_CLIENTS = "/list"
-
-
 class MessageError:
     """STATIC ERROR DATA."""
 

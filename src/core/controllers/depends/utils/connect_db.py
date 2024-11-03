@@ -18,7 +18,8 @@ def get_crud() -> "Crud":
     return create_crud_helper()
 
 
-async def _init_engine():
+async def init_engine():
+    """Initialize the engine and connect to the database."""
     return await get_engine(
         url=settings.db.get_url_database, echo=settings.db.ECHO
     )
@@ -32,7 +33,7 @@ async def disconnect_db():
     await connect.async_engine.dispose()
 
 
-async def get_session(engine: Annotated["HelperDB", Depends(_init_engine)]):
+async def get_session(engine: Annotated["HelperDB", Depends(init_engine)]):
     """Return db session."""
     async with engine.get_scoped_session() as session:
         yield session

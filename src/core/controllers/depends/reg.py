@@ -4,15 +4,15 @@ import uuid
 from typing import TYPE_CHECKING, Annotated, Optional
 
 import pydantic
-from fastapi import Depends, Form
+from fastapi import BackgroundTasks, Depends, File, Form, UploadFile
 
+from src.core.apps.tasks.tasks import watermark_proc
 from src.core.controllers.depends.utils.connect_db import get_crud, get_session
 from src.core.controllers.depends.utils.hash_password import hash_pwd
 from src.core.controllers.depends.utils.response_errors import (
     raise_400_bad_req,
     valid_password_or_error_422,
 )
-from src.core.controllers.locations import location
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -23,6 +23,7 @@ if TYPE_CHECKING:
 async def new_user(
     crud: Annotated["Crud", Depends(get_crud)],
     session: Annotated["AsyncSession", Depends(get_session)],
+    background_tasks: BackgroundTasks,
     first_name: Annotated[
         str,
         Form(
@@ -73,13 +74,10 @@ async def new_user(
             default_value="M",
         ),
     ],
-    avatar: Annotated[
-        bytes | None,
-        Form(
-            description="User's avatar.",
-            max_length=1024 * 1024,
-        ),
-    ] = None,
+    avatar: Optional[UploadFile] = File(
+        None,
+        description="User's avatar (optional).",
+    ),
     latitude: Annotated[
         float,
         Form(
@@ -146,9 +144,24 @@ async def new_user(
                 session=session, location=new_location
             )
 
+            if avatar and avatar.file:
+                file_size = avatar.size
+                if file_size > 1024 * 1024:
+                    raise ValueError("limit of 1MB")
+                content = await avatar.read()
+                background_tasks.add_task(
+                    watermark_proc,
+                    receiver_id=new_uuid,
+                    file=content,
+                    filename=avatar.filename,
+                )
+
         return True
+
     except Exception as e:
         print(f"Registration failed: {e}")
+
         raise_400_bad_req()
         await session.close()
+
         return None
