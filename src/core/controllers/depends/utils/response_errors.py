@@ -1,5 +1,7 @@
 """Common Raise HTTPException."""
 
+import uuid
+
 from fastapi import HTTPException, status
 
 from src.core.settings.constants import Headers, MessageError
@@ -88,3 +90,15 @@ def raise_http_401(
         error_message=error_message,
         headers=headers,
     )
+
+
+def valid_id_or_error_422(id_data: str):
+    """Validate the given UUID."""
+    try:
+        uuid.UUID(id_data, version=4)
+    except ValueError:
+        raise http_exception(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            error_type=MessageError.INVALID_ID_ERR,
+            error_message=MessageError.INVALID_ID_ERR_MESSAGE,
+        )

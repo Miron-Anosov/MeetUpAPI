@@ -49,11 +49,15 @@ async def create_client(
 @clients.post(
     path=ClientsRouts.MATCH_POST_PATH,
     status_code=status.HTTP_201_CREATED,
-    response_model=Match,
+    response_model=Status,
     responses=HTTPResponseAuthClients.responses,
 )
 async def mach_post(
     successful: Annotated[bool, Depends(match_post)]
 ) -> JSONResponse:
     """Handle for match post."""
-    pass
+    return JSONResponse(
+        content=Status(result=successful).model_dump(),
+        status_code=status.HTTP_201_CREATED,
+        media_type=MimeTypes.APPLICATION_JSON,
+    )

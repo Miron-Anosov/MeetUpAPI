@@ -1,6 +1,7 @@
 """Core ORM module."""
 
 from src.core.models.cruds.auth import AuthUsers
+from src.core.models.cruds.like import Like
 from src.core.models.cruds.location import Locations
 from src.core.models.cruds.user import Users
 
@@ -13,11 +14,13 @@ class Crud:
         user_crud: Users,
         auth_crud: AuthUsers,
         location_crud: Locations,
+        likes: Like,
     ) -> None:
         """Initialize Crud with CRUD instances."""
         self.users = user_crud
         self.auth = auth_crud
         self.locations = location_crud
+        self.likes = likes
 
 
 def create_crud_helper() -> Crud:
@@ -30,4 +33,5 @@ def create_crud_helper() -> Crud:
         location_crud=Locations(),
         user_crud=Users(),
         auth_crud=AuthUsers(),
+        likes=Like(),
     )

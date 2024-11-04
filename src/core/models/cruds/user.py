@@ -2,7 +2,7 @@
 
 from typing import Optional
 
-from sqlalchemy import select, update
+from sqlalchemy import Sequence, select, update
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -53,3 +53,15 @@ class Users:
             return None
 
     # TODO добавляем логирование и обработку ошибок.
+
+    @staticmethod
+    async def get_user_names(
+        id_users: tuple,
+        session: AsyncSession,
+        user_table: type[UserORM] = UserORM,
+    ):
+        """Fetch user's names by ID."""
+        stmt = select(user_table.first_name).where(user_table.id.in_(id_users))
+        result = await session.execute(stmt)
+        names = result.scalars().all()
+        return names

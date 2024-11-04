@@ -10,6 +10,8 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from alembic import context
 from src.core.models.models.auth import AuthORM
 from src.core.models.models.base import BaseModel
+from src.core.models.models.like import LikesORM
+from src.core.models.models.location import LocationORM
 from src.core.models.models.user import UserORM
 from src.core.settings.env import settings
 

@@ -1,6 +1,6 @@
 """Users CRUD methods."""
 
-from sqlalchemy import bindparam, select
+from sqlalchemy import Sequence, bindparam, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -27,7 +27,7 @@ class AuthUsers:
     ):
         """Authenticate a user by email."""
         try:
-            user: AuthORM = await session.scalar(
+            user: AuthORM | None = await session.scalar(
                 statement=(
                     select(auth_user).where(
                         auth_user.email == bindparam("email")
@@ -44,3 +44,17 @@ class AuthUsers:
         except SQLAlchemyError as e:
             print(e)
             return None, None
+
+    @staticmethod
+    async def get_emails_by_id(
+        session: AsyncSession,
+        users: tuple[str, str],
+        table_auth: type[AuthORM] = AuthORM,
+    ):
+        """Return emails users by ID."""
+        stmt = select(table_auth.email).where(table_auth.user_id.in_(users))
+
+        result = await session.execute(stmt)
+
+        emails = result.scalars().all()
+        return emails

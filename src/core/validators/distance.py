@@ -13,8 +13,8 @@ class DistanceRequest(pydantic.BaseModel):
         title="Get distance between two locations",
         json_schema_extra={
             "example": {
-                "location_a": (55.7558, 37.6173),
-                "location_b": (59.9343, 30.3351),
+                "location_a": "(55.7558, 37.6173)",
+                "location_b": "(59.9343, 30.3351)",
             }
         },
     )

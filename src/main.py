@@ -5,16 +5,19 @@ from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI
 
+from src.core.apps.app_celery import check_redis_connection
 from src.core.controllers.auth import auth
 from src.core.controllers.clients import clients
 from src.core.controllers.depends.utils.connect_db import disconnect_db
 from src.core.controllers.locations import location
+from src.core.settings.constants import Prefix
 
 
 @asynccontextmanager
 async def lifespan(_: FastAPI):
     """Connect and close DB."""
     print("DB connected")
+    check_redis_connection()
     yield
     await disconnect_db()
     print("DB disconnected")
@@ -24,6 +27,7 @@ def create_app() -> FastAPI:
     """Maker FastAPI."""
     app_ = FastAPI(
         lifespan=lifespan,
+        root_path=Prefix.API,
     )
     app_.include_router(clients)
     app_.include_router(auth)

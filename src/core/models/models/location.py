@@ -33,7 +33,7 @@ class LocationORM(BaseModel):
 
     __table_args__ = (
         Index(
-            "idx_location_gist",
+            "idx_location_gist_clients",
             location,
             postgresql_using=LocationH3.POSTGRESQL_INDEX_TYPE,
         ),

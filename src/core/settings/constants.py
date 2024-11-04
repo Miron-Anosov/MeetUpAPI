@@ -1,6 +1,7 @@
 """Constants."""
 
 from pathlib import Path
+from typing import Any
 
 from fastapi import status
 
@@ -8,7 +9,7 @@ from fastapi import status
 class DetailError:
     """Default Error model to response."""
 
-    CONTENT = {
+    CONTENT: dict[str, Any] = {
         "application/json": {
             "example": {
                 "detail": {
@@ -55,7 +56,7 @@ class ResponseError:
 class HTTPResponseClients:
     """Swagger Docs."""
 
-    responses = dict()
+    responses: dict[str, Any] = dict()
     responses[status.HTTP_500_INTERNAL_SERVER_ERROR] = (
         ResponseError.RESPONSES.get(status.HTTP_500_INTERNAL_SERVER_ERROR)
     )
@@ -71,7 +72,7 @@ class HTTPResponseClients:
 class HTTPResponseAuthClients:
     """Swagger Docs."""
 
-    responses = dict()
+    responses: dict[str, Any] = dict()
     responses[status.HTTP_401_UNAUTHORIZED] = ResponseError.RESPONSES.get(
         status.HTTP_401_UNAUTHORIZED
     )
@@ -254,3 +255,11 @@ class JWTconf:
     REFERRAL_EXPIRE_DAYS = 100
     PRIVATE_KEY = "private_key"
     PUBLIC_KEY = "public_key"
+
+
+class IntKeys:
+    """Index keys."""
+
+    AUTH_USER_FOR_EMAIL = 0
+    TARGET_USER_FOR_EMAIL = 1
+    MATCH = 2

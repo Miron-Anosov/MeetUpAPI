@@ -144,17 +144,18 @@ async def new_user(
                 session=session, location=new_location
             )
 
-            if avatar and avatar.file:
-                file_size = avatar.size
-                if file_size > 1024 * 1024:
-                    raise ValueError("limit of 1MB")
+            if avatar and avatar.file and avatar.size < 1024 * 1024:
+
                 content = await avatar.read()
                 background_tasks.add_task(
                     watermark_proc,
                     receiver_id=new_uuid,
                     file=content,
-                    filename=avatar.filename,
+                    filename=avatar.filename if avatar.filename else "image",
                 )
+            else:
+
+                raise ValueError("Incorrect file type")
 
         return True
 

@@ -47,12 +47,13 @@ async def login_user_form(
             id_user=user_id,
             session=session,
         )
-        payload = {
-            JWT.PAYLOAD_SUB_KEY: str(user_id),
-            JWT.PAYLOAD_USERNAME_KEY: user_profile.first_name,
-        }
+        if user_profile:
+            payload = {
+                JWT.PAYLOAD_SUB_KEY: str(user_id),
+                JWT.PAYLOAD_USERNAME_KEY: user_profile.first_name,
+            }
 
-        return response_auth_tokens(payload=payload)
+            return response_auth_tokens(payload=payload)
 
     raise http_exception(
         status_code=status.HTTP_401_UNAUTHORIZED,

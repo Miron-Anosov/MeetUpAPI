@@ -103,6 +103,15 @@ class WatterMark(EnvironmentSetting):
     OPACITY: int = Field(default=128)
 
 
+class EmailEnv(EnvironmentSetting):
+    """Email env configuration."""
+
+    SMTP_USER: str
+    SMTP_HOST: str
+    SMTP_PASSWORD: str
+    SMTP_PORT: int
+
+
 class Settings:
     """Common settings for environments."""
 
@@ -113,6 +122,7 @@ class Settings:
         self.redis = RedisEnv()
         self.s3 = S3Env()
         self.wm = WatterMark()
+        self.email = EmailEnv()
 
 
 settings = Settings()
