@@ -1,6 +1,9 @@
 """Users CRUD methods."""
 
-from sqlalchemy import update
+from typing import Optional
+
+from sqlalchemy import select, update
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.models.models.user import UserORM
@@ -34,5 +37,19 @@ class Users:
             .where(user_table.id == user_ud)
             .values(avatar_path=path)
         )
+
+    @staticmethod
+    async def get_user(
+        id_user: str,
+        session: AsyncSession,
+        user_table: type[UserORM] = UserORM,
+    ) -> Optional["UserORM"]:
+        """Fetch a user by ID."""
+        stmt = select(user_table).where(user_table.id == id_user)
+        try:
+            return await session.scalar(stmt)
+        except (SQLAlchemyError, IntegrityError) as e:
+            print(e)
+            return None
 
     # TODO добавляем логирование и обработку ошибок.

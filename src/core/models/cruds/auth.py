@@ -1,5 +1,7 @@
 """Users CRUD methods."""
 
+from sqlalchemy import bindparam, select
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.models.models.auth import AuthORM
@@ -16,3 +18,29 @@ class AuthUsers:
     ) -> None:
         """Add a new user to the database."""
         session.add(table_auth(**auth_user))
+
+    @staticmethod
+    async def login_user(
+        email: str,
+        session: AsyncSession,
+        auth_user: type[AuthORM] = AuthORM,
+    ):
+        """Authenticate a user by email."""
+        try:
+            user: AuthORM = await session.scalar(
+                statement=(
+                    select(auth_user).where(
+                        auth_user.email == bindparam("email")
+                    )
+                ),
+                params={"email": email},
+            )
+
+            if user:
+                return user.hashed_password, user.user_id
+
+            return None, None
+
+        except SQLAlchemyError as e:
+            print(e)
+            return None, None
