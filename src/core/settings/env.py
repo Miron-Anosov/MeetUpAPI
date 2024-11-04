@@ -1,5 +1,7 @@
 """Configuration .env."""
 
+from datetime import timedelta
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -63,6 +65,15 @@ class RedisEnv(EnvironmentSetting):
     REDIS_PORT: int
     REDIS_PASSWORD: str
     REDIS_USER: str
+    REDIS_LIMIT_REQUESTS: int
+    REDIS_EXP_REQUESTS_DAYS: int
+
+    @property
+    def exp_in_days(self) -> int:
+        """Set the expiration time."""
+        return int(
+            timedelta(days=self.REDIS_EXP_REQUESTS_DAYS).total_seconds()
+        )
 
     @property
     def redis_url_broker(self):

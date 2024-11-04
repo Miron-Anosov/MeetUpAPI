@@ -9,6 +9,10 @@ from src.core.apps.app_celery import check_redis_connection
 from src.core.controllers.auth import auth
 from src.core.controllers.clients import clients
 from src.core.controllers.depends.utils.connect_db import disconnect_db
+from src.core.controllers.depends.utils.redis_chash import (
+    close_redis,
+    init_redis,
+)
 from src.core.controllers.locations import location
 from src.core.settings.constants import Prefix
 
@@ -17,9 +21,11 @@ from src.core.settings.constants import Prefix
 async def lifespan(_: FastAPI):
     """Connect and close DB."""
     print("DB connected")
+    redis = await init_redis()
     check_redis_connection()
     yield
     await disconnect_db()
+    await close_redis(client=redis)
     print("DB disconnected")
 
 

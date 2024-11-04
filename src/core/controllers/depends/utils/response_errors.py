@@ -102,3 +102,12 @@ def valid_id_or_error_422(id_data: str):
             error_type=MessageError.INVALID_ID_ERR,
             error_message=MessageError.INVALID_ID_ERR_MESSAGE,
         )
+
+
+def raise_http_429():
+    """Raise HTTP 429."""
+    raise http_exception(
+        status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+        error_type=MessageError.TYPE_ERROR_429,
+        error_message=MessageError.MESSAGE_429_LIMIT,
+    )

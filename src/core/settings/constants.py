@@ -134,9 +134,10 @@ class MessageError:
     TYPE_ERROR_INTERNAL_SERVER_ERROR = "Internal server error."
     TYPE_ERROR_404 = "HTTP_404_NOT_FOUND"
     TYPE_ERROR_500 = "HTTP_500_INTERNAL_SERVER_ERROR"
+    TYPE_ERROR_429 = "429 Too Many Requests"
+    MESSAGE_429_LIMIT = "Message 429 Limit request."
     MESSAGE_SERVER_ERROR = "An error occurred."
     MESSAGE_ENV_FILE_INCORRECT_OR_NOT_EXIST = "~/.env  incorrect or not exist"
-    MESSAGE_NO_REFERRALS_FOUND = "No referrals found"
     MESSAGE_USER_NOT_FOUND = "User not found"
     MESSAGE_IF_EMAIL_ALREADY_EXIST = (
         "Registration failed. Please check your information."
@@ -263,3 +264,22 @@ class IntKeys:
     AUTH_USER_FOR_EMAIL = 0
     TARGET_USER_FOR_EMAIL = 1
     MATCH = 2
+    FIRST_MATCH = 1
+
+
+class LiterKeys:
+    """Litter KEYS."""
+
+    REQUEST = "request"
+    RESPONSE = "response"
+    # GET = "GET"
+    # POST = "POST"
+    # DELETE = "DELETE"
+    AUTH_HEADER = "authorization"
+    AUTH_HEADER_PREF_BEARER = 7
+
+
+class TypeEncoding:
+    """STATIC ENCODING DATA."""
+
+    UTF8 = "utf-8"

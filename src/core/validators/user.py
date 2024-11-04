@@ -21,7 +21,6 @@ class User(pydantic.BaseModel):
     )
     sex: str = pydantic.Field(
         pattern=r"[MF]",
-        length=1,
     )
     location: tuple[float, float]
 
