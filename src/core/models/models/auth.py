@@ -1,11 +1,15 @@
 """SQLAlchemy UsersAuthORM model."""
 
 from datetime import datetime
+from typing import TYPE_CHECKING
 
 from sqlalchemy import UUID, ForeignKey, String, func
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.core.models.models.base import BaseModel
+
+if TYPE_CHECKING:
+    from src.core.models.models.user import UserORM
 
 
 class AuthORM(BaseModel):
@@ -22,3 +26,5 @@ class AuthORM(BaseModel):
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
     created_at: Mapped[datetime] = mapped_column(server_default=func.now())
     active: Mapped[bool] = mapped_column(default=True)
+
+    user: Mapped["UserORM"] = relationship("UserORM", back_populates="auth")

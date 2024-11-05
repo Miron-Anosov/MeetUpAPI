@@ -11,7 +11,7 @@ from src.core.settings.env import settings
 class TokenAuth(pydantic.BaseModel):
     """User's uniq api-key.
 
-    `access_token` uses for authorisation for users.
+    `access_token` uses for authorisation for users_data.
     `refresh_token` uses for refresh access_token.
     `token_type`: Bearer
     """

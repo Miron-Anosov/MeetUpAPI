@@ -111,3 +111,16 @@ def raise_http_429():
         error_type=MessageError.TYPE_ERROR_429,
         error_message=MessageError.MESSAGE_429_LIMIT,
     )
+
+
+def raise_http_404(
+    error_type: str = MessageError.TYPE_ERROR_404,
+    error_message: str = MessageError.MESSAGE_USER_NOT_FOUND,
+    status_code: int = status.HTTP_404_NOT_FOUND,
+):
+    """Raise an HTTP 404 exception."""
+    raise http_exception(
+        status_code=status_code,
+        error_type=error_type,
+        error_message=error_message,
+    )

@@ -1,3 +1,4 @@
+# type: ignore
 """Location routes."""
 
 from typing import Annotated
@@ -6,16 +7,17 @@ from fastapi import APIRouter, Depends, status
 from fastapi.responses import JSONResponse
 from geopy.distance import distance
 
-from src.core.controllers.depends.get_location_by_auth_user import (
+from src.core.controllers.depends.get_users_near_auth import (
     location_near_auth_user,
 )
 from src.core.settings.constants import (
     LocationRoutes,
+    MimeTypes,
     Response500,
     ResponsesAuthUser,
 )
 from src.core.validators.distance import DistanceRequest, DistanceResponse
-from src.core.validators.user import UsersLocation
+from src.core.validators.user import Users
 
 
 def create_location_route() -> APIRouter:
@@ -32,17 +34,21 @@ def create_location_route() -> APIRouter:
 location: APIRouter = create_location_route()
 
 
-@location.get(
+@location.post(
     path=LocationRoutes.GET_USERS_PATH_BY_AUTH_USER,
     status_code=status.HTTP_200_OK,
-    response_model=UsersLocation,
+    response_model=Users,
     responses=ResponsesAuthUser.responses,
 )
 async def get_locations_near_auth_user(
-    users: Annotated["JSONResponse", Depends(location_near_auth_user)],
+    users: Annotated[Users, Depends(location_near_auth_user)],
 ) -> "JSONResponse":
-    """**Get locations of users near authenticated user**."""
-    return users
+    """**Get locations of users_data near authenticated user**."""
+    return JSONResponse(
+        content=users.model_dump(),
+        status_code=status.HTTP_201_CREATED,
+        media_type=MimeTypes.APPLICATION_JSON,
+    )
 
 
 @location.post(

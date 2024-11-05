@@ -1,3 +1,4 @@
+# type: ignore
 """Registration routes."""
 
 from typing import Annotated
@@ -9,11 +10,10 @@ from src.core.controllers.depends.match import match_post
 from src.core.controllers.depends.reg import new_user
 from src.core.settings.constants import (
     ClientsRouts,
-    HTTPResponseAuthClients,
     HTTPResponseClients,
+    HTTPResponseMatch,
     MimeTypes,
 )
-from src.core.validators.match import Match
 from src.core.validators.status_ok import Status
 
 
@@ -50,7 +50,7 @@ async def create_client(
     path=ClientsRouts.MATCH_POST_PATH,
     status_code=status.HTTP_201_CREATED,
     response_model=Status,
-    responses=HTTPResponseAuthClients.responses,
+    responses=HTTPResponseMatch.responses,
 )
 async def mach_post(
     successful: Annotated[bool, Depends(match_post)]

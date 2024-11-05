@@ -1,4 +1,4 @@
-"""Dependent for new users."""
+"""Dependent for new users_data."""
 
 import uuid
 from typing import TYPE_CHECKING, Annotated, Optional

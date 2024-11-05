@@ -8,7 +8,7 @@ from src.core.models.models.auth import AuthORM
 
 
 class AuthUsers:
-    """CRUD operations for authentication users."""
+    """CRUD operations for authentication users_data."""
 
     @staticmethod
     async def insert_auth_user(
@@ -51,7 +51,7 @@ class AuthUsers:
         users: tuple[str, str],
         table_auth: type[AuthORM] = AuthORM,
     ):
-        """Return emails users by ID."""
+        """Return emails users_data by ID."""
         stmt = select(table_auth.email).where(table_auth.user_id.in_(users))
 
         result = await session.execute(stmt)

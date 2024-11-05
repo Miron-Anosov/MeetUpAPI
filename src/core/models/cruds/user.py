@@ -1,11 +1,12 @@
 """Users CRUD methods."""
 
-from typing import Optional
+from typing import Iterable, Optional
 
-from sqlalchemy import Sequence, select, update
+from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.models.models.auth import AuthORM
 from src.core.models.models.user import UserORM
 
 
@@ -65,3 +66,31 @@ class Users:
         result = await session.execute(stmt)
         names = result.scalars().all()
         return names
+
+    @staticmethod
+    async def get_user_by_filers(
+        filters: dict | None,
+        sort_by_created: bool | None,
+        users_id: list,
+        session: AsyncSession,
+        user_table: type[UserORM] = UserORM,
+        auth_table: type[AuthORM] = AuthORM,
+    ) -> Iterable[UserORM]:
+        """Fetch users_data by filers."""
+        query = select(user_table).where(user_table.id.in_(users_id))
+
+        if filters:
+            for key, value in filters.items():
+                query = query.where(getattr(user_table, key) == value)
+
+        if sort_by_created is not None:
+            query = query.join(
+                auth_table, user_table.id == auth_table.user_id
+            ).order_by(
+                auth_table.created_at.desc()
+                if sort_by_created
+                else auth_table.created_at.asc()
+            )
+
+        result = await session.execute(query)
+        return result.scalars().all()

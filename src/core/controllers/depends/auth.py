@@ -1,4 +1,4 @@
-"""Depends for new users."""
+"""Depends for new users_data."""
 
 from typing import TYPE_CHECKING, Annotated
 

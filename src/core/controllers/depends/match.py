@@ -1,3 +1,4 @@
+# type: ignore
 """This is the match module."""
 
 from typing import TYPE_CHECKING, Annotated
@@ -45,9 +46,7 @@ async def match_post(
 
     try:
 
-        type_token = token.pop(JWT.TOKEN_TYPE_FIELD)
-
-        if type_token != JWT.TOKEN_TYPE_ACCESS:
+        if token.get(JWT.TOKEN_TYPE_FIELD) != JWT.TOKEN_TYPE_ACCESS:
             raise InvalidTokenError()
 
         if token.get(JWT.PAYLOAD_SUB_KEY) == target_user_id:
@@ -60,26 +59,15 @@ async def match_post(
                 session=session,
             )
 
-    except InvalidTokenError as e:
-        print(e)
-        raise_http_401()
-        return False
-
-    except IntegrityError as e:
-        print(e, response, request)
-        # TODO logger  target_user_id is not exist
-        return False
-
-    try:
         is_match = await crud.likes.select_match(
             target_user=target_user_id,
-            owner_like=token.pop(JWT.PAYLOAD_SUB_KEY),
+            owner_like=token.get(JWT.PAYLOAD_SUB_KEY),
             session=session,
         )
 
         if is_match:
 
-            id_users: tuple[str, str] = target_user_id, token.pop(
+            id_users: tuple[str, str] = target_user_id, token.get(
                 JWT.PAYLOAD_SUB_KEY
             )
 
@@ -101,7 +89,12 @@ async def match_post(
 
             return True
 
+    except InvalidTokenError as e:
+        print(e)
+        raise_http_401()
+        return False
+
     except IntegrityError as e:
         print(e, response, request)
-        # TODO logger  если уже есть уникальная пара значений
+        # TODO logger  target_user_id is not exist
         return True

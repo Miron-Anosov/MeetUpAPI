@@ -50,6 +50,10 @@ class ResponseError:
             "description": "Bad Request",
             "content": DetailError.CONTENT,
         },
+        status.HTTP_429_TOO_MANY_REQUESTS: {
+            "description": "Not Found",
+            "content": DetailError.CONTENT,
+        },
     }
 
 
@@ -81,6 +85,24 @@ class HTTPResponseAuthClients:
     )
     responses[status.HTTP_422_UNPROCESSABLE_ENTITY] = (
         ResponseError.RESPONSES.get(status.HTTP_422_UNPROCESSABLE_ENTITY)
+    )
+
+
+class HTTPResponseMatch:
+    """Http Response Match."""
+
+    responses: dict[str, Any] = dict()
+    responses[status.HTTP_401_UNAUTHORIZED] = ResponseError.RESPONSES.get(
+        status.HTTP_401_UNAUTHORIZED
+    )
+    responses[status.HTTP_500_INTERNAL_SERVER_ERROR] = (
+        ResponseError.RESPONSES.get(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    )
+    responses[status.HTTP_422_UNPROCESSABLE_ENTITY] = (
+        ResponseError.RESPONSES.get(status.HTTP_422_UNPROCESSABLE_ENTITY)
+    )
+    responses[status.HTTP_429_TOO_MANY_REQUESTS] = ResponseError.RESPONSES.get(
+        status.HTTP_429_TOO_MANY_REQUESTS
     )
 
 
@@ -162,18 +184,17 @@ class LocationH3:
     FIELD_LATITUDE_INDEX = 0
     FIELD_LONGITUDE = "longitude"
     FIELD_LONGITUDE_INDEX = 1
+
     H3_RESOLUTION_8 = 8
     H3_RESOLUTION_7 = 7
     H3_RESOLUTION_6 = 6
     H3_RESOLUTION_5 = 5
-    H3_DIAMETER_8 = 461.354684
-    H3_DIAMETER_7 = 1220.629759
-    H3_DIAMETER_6 = 3229.482772
-    H3_DIAMETER_5 = 8544.408276
-    H3_MAX_DIAMETER_8 = 10000
-    H3_MAX_DIAMETER_7 = 20000
-    H3_MAX_DIAMETER_6 = 40000
-    H3_MAX_DIAMETER_5 = 50000
+
+    H3_MAX_DIAMETER_8 = 2300
+    H3_MAX_DIAMETER_7 = 5000
+    H3_MAX_DIAMETER_6 = 14000
+    H3_MAX_DIAMETER_5 = 35000
+
     FIELD_H3_INDEX = "h3_index_{}"
 
 
@@ -283,3 +304,14 @@ class TypeEncoding:
     """STATIC ENCODING DATA."""
 
     UTF8 = "utf-8"
+
+
+class DescriptionForms:
+    """Description forms."""
+
+    EXACT = (
+        "Specifies whether to use exact distances. "
+        "If true, precise distance calculations are applied;"
+        " if false, approximate values are used, suited for map"
+        " visualizations with varying zoom levels."
+    )
