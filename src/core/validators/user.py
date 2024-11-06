@@ -33,10 +33,10 @@ class User(pydantic.BaseModel):
     )
 
 
-class Users(pydantic.BaseModel):
+class UsersCollection(pydantic.BaseModel):
     """User model for api/list.
 
-    The Users model validates a collection of user profiles,
+    The UsersCollection model validates a collection of user profiles,
     with each user profile containing either precise or map-oriented
     distance data.
     The choice of distance representation (exact or map-optimized)

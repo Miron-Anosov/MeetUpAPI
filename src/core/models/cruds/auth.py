@@ -1,4 +1,4 @@
-"""Users CRUD methods."""
+"""UsersCollection CRUD methods."""
 
 from sqlalchemy import Sequence, bindparam, select
 from sqlalchemy.exc import SQLAlchemyError

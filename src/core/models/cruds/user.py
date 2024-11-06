@@ -1,4 +1,4 @@
-"""Users CRUD methods."""
+"""UsersCollection CRUD methods."""
 
 from typing import Iterable, Optional
 
@@ -81,7 +81,7 @@ class Users:
 
         if filters:
             for key, value in filters.items():
-                query = query.where(getattr(user_table, key) == value)
+                query = query.where(getattr(user_table, key) == value)  # noqa
 
         if sort_by_created is not None:
             query = query.join(

@@ -67,6 +67,7 @@ class RedisEnv(EnvironmentSetting):
     REDIS_USER: str
     REDIS_LIMIT_REQUESTS: int
     REDIS_EXP_REQUESTS_DAYS: int
+    REDIS_EXP_LOCATION: int
 
     @property
     def exp_in_days(self) -> int:
@@ -123,6 +124,19 @@ class EmailEnv(EnvironmentSetting):
     SMTP_PORT: int
 
 
+class GunicornENV(EnvironmentSetting):
+    """Conf Gunicorn."""
+
+    WORKERS: int
+    BUILD: str
+    LOG_LEVEL: str
+    WSGI_APP: str
+    WORKER_CLASS: str
+    TIMEOUT: int
+    ACCESSLOG: str
+    ERRORLOG: str
+
+
 class Settings:
     """Common settings for environments."""
 
@@ -134,6 +148,7 @@ class Settings:
         self.s3 = S3Env()
         self.wm = WatterMark()
         self.email = EmailEnv()
+        self.gunicorn = GunicornENV()
 
 
 settings = Settings()

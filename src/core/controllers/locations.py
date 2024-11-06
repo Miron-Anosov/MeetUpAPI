@@ -14,10 +14,10 @@ from src.core.settings.constants import (
     LocationRoutes,
     MimeTypes,
     Response500,
-    ResponsesAuthUser,
+    ResponsesLocationUser,
 )
 from src.core.validators.distance import DistanceRequest, DistanceResponse
-from src.core.validators.user import Users
+from src.core.validators.user import UsersCollection
 
 
 def create_location_route() -> APIRouter:
@@ -37,11 +37,11 @@ location: APIRouter = create_location_route()
 @location.post(
     path=LocationRoutes.GET_USERS_PATH_BY_AUTH_USER,
     status_code=status.HTTP_200_OK,
-    response_model=Users,
-    responses=ResponsesAuthUser.responses,
+    response_model=UsersCollection,
+    responses=ResponsesLocationUser.responses,
 )
 async def get_locations_near_auth_user(
-    users: Annotated[Users, Depends(location_near_auth_user)],
+    users: Annotated[UsersCollection, Depends(location_near_auth_user)],
 ) -> "JSONResponse":
     """**Get locations of users_data near authenticated user**."""
     return JSONResponse(

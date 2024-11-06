@@ -1,5 +1,20 @@
 
 services:
+  nginx:
+    image: nginx:1.23.2
+    container_name: ${CONTAINER_NAME_NGINX}
+    restart: always
+    ports:
+      - ${NGINX_PORT}:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - api_socket_volume:/tmp
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - api_backend
+    networks:
+      - api_net
+    stop_grace_period: 5s
 
   db:
     image: postgis/postgis:17-3.5
@@ -8,8 +23,8 @@ services:
     ports:
       - ${POSTGRES_PORT}:5432
     volumes:
-      - volume_postgres_data:/var/lib/postgresql/data
-      - volume_postgres_logs:/logs_postgres
+      - postgres_data:/var/lib/postgresql/data
+      - postgres_logs:/logs_postgres
     shm_size: 256mb
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
@@ -49,21 +64,57 @@ services:
     ports:
       - ${REDIS_PORT}:6379
     volumes:
-      - volume_redis_data:/data
+      - redis_data:/data
     networks:
       - api_net
 
 
+  api_backend:
+    build:
+      dockerfile: Dockerfile
+      context: ./
+    container_name: ${CONTAINER_NAME_API}
+    restart: always
+    image: ${IMAGE_API}:${VERSION_API}
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - JWT_PRIVATE_KEY=${JWT_PRIVATE}
+      - JWT_PUBLIC_KEY=${JWT_PUBLIC}
+    command:
+      - /app/start.sh
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - api_net
+    volumes:
+      - api_socket_volume:/tmp
+      - api_logs:/var/log/refer
+    env_file:
+      - .env
+    stop_grace_period: 10s
 
 volumes:
-  volume_postgres_data:
+  postgres_data:
     name: ${POSTGRES_DATA_VOLUME}
-  volume_postgres_logs:
+  postgres_logs:
     name: ${POSTGRES_LOGS_VOLUME}
-  volume_redis_data:
+  nginx_logs:
+    name: ${NGINX_LOGS_VOLUME}
+  api_logs:
+    name: ${API_LOGS_VOLUME}
+  api_socket_volume:
+    name: ${SOCKET_VOLUME}
+  redis_data:
     name: ${REDIS_VOLUME}
-
 
 networks:
   api_net:
     driver: bridge
+

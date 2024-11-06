@@ -1,7 +1,7 @@
 """Constants."""
 
 from pathlib import Path
-from typing import Any
+from typing import Any, Collection
 
 from fastapi import status
 
@@ -127,6 +127,30 @@ class ResponsesAuthUser:
     )
 
 
+class ResponsesLocationUser:
+    """Swagger Docs."""
+
+    responses_304: dict[str, Collection[str]] | None = {
+        status.HTTP_304_NOT_MODIFIED: {
+            "description": "Not Modified",
+            "content": {},
+        },
+    }
+
+    responses = dict()
+    responses[status.HTTP_401_UNAUTHORIZED] = ResponseError.RESPONSES.get(
+        status.HTTP_401_UNAUTHORIZED
+    )
+    responses[status.HTTP_500_INTERNAL_SERVER_ERROR] = (
+        ResponseError.RESPONSES.get(status.HTTP_500_INTERNAL_SERVER_ERROR)
+    )
+
+    responses[status.HTTP_304_NOT_MODIFIED] = responses_304
+    responses[status.HTTP_404_NOT_FOUND] = ResponseError.RESPONSES.get(
+        status.HTTP_404_NOT_FOUND
+    )
+
+
 class MimeTypes:
     """МIME types constants."""
 
@@ -174,8 +198,8 @@ class LocationH3:
     SRID = 4326
     POSTGRESQL_INDEX_TYPE = "gist"
     POSTGRESQL_GEOGRAPHY_OPS = "geography_ops"
-    H3_RESOLUTION_MIN = 4
-    H3_RESOLUTION_MAX = 8
+    H3_RESOLUTION_MIN = 3
+    H3_RESOLUTION_MAX = 9
 
     FIELD_ID = "id"
     FIELD_CREATOR = "creator"
@@ -185,15 +209,21 @@ class LocationH3:
     FIELD_LONGITUDE = "longitude"
     FIELD_LONGITUDE_INDEX = 1
 
+    H3_RESOLUTION_9 = 9
     H3_RESOLUTION_8 = 8
     H3_RESOLUTION_7 = 7
     H3_RESOLUTION_6 = 6
     H3_RESOLUTION_5 = 5
+    H3_RESOLUTION_4 = 4
+    H3_RESOLUTION_3 = 3
 
-    H3_MAX_DIAMETER_8 = 2300
-    H3_MAX_DIAMETER_7 = 5000
-    H3_MAX_DIAMETER_6 = 14000
-    H3_MAX_DIAMETER_5 = 35000
+    H3_MAX_DIAMETER_9 = 100
+    H3_MAX_DIAMETER_8 = 2000
+    H3_MAX_DIAMETER_7 = 3000
+    H3_MAX_DIAMETER_6 = 5000
+    H3_MAX_DIAMETER_5 = 6000
+    H3_MAX_DIAMETER_4 = 8000
+    H3_MAX_DIAMETER_3 = 15000
 
     FIELD_H3_INDEX = "h3_index_{}"
 
@@ -298,6 +328,7 @@ class LiterKeys:
     # DELETE = "DELETE"
     AUTH_HEADER = "authorization"
     AUTH_HEADER_PREF_BEARER = 7
+    LOCATION_PREF = "api/location_list"
 
 
 class TypeEncoding:
@@ -314,4 +345,19 @@ class DescriptionForms:
         "If true, precise distance calculations are applied;"
         " if false, approximate values are used, suited for map"
         " visualizations with varying zoom levels."
+    )
+
+    RADIUS = (
+        "Sets the radius with H3 resolution level 9 as the highest precision,"
+        " with a maximum effective diameter "
+        "of approximately 100 meters (H3_MAX_DIAMETER_9 = 100). Additional "
+        "resolutions are also available with the following "
+        "maximum diameters: 2,000 meters for level 8, 3,000 meters "
+        "for level 7, 5,000 meters for level 6, 6,000 meters for level 5, "
+        "8,000 meters for level 4, and 15,000 meters for level 3. "
+        "These thresholds can be adjusted for production as needed. "
+        "When 'EXACT' is applied, the default resolution "
+        "is set to the highest available (level 9), with a maximum "
+        "range constraint of 300 km (or 150 km when interpreted as radius). "
+        "The unit of measurement is currently set to meters."
     )

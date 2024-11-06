@@ -1,3 +1,4 @@
+# type: ignore
 """Cache module for caching API responses with Redis."""
 
 import hashlib
@@ -5,10 +6,20 @@ from functools import update_wrapper, wraps
 from typing import Any, Callable
 
 from fastapi import Request, Response
+from fastapi.dependencies.utils import get_typed_return_annotation
 from redis import asyncio as aioredis
 from redis.asyncio.client import Redis
+from starlette.status import HTTP_304_NOT_MODIFIED
 
+from src.core.controllers.depends.utils.conf_headers import (
+    check_etag,
+    set_response_headers,
+)
 from src.core.controllers.depends.utils.response_errors import raise_http_429
+from src.core.controllers.depends.utils.serialize_and_deserilize import (
+    deserialize_data,
+    serialize_data,
+)
 from src.core.controllers.depends.utils.token_from import (
     get_user_id_from_token,
 )
@@ -88,13 +99,15 @@ async def init_redis() -> Redis:
     return await setup_redis()
 
 
-def gen_hash_from_req_get(req: Request) -> str:
+def gen_hash_from_req(req: Request) -> str:
     """Gen hash from request params."""
     data_to_cache = get_user_id_from_token(request=req)
-    if not data_to_cache:
-        return hashlib.md5(str(req.query_params.items()).encode()).hexdigest()
 
-    return hashlib.md5(data_to_cache.encode()).hexdigest()
+    req_params = req.query_params.items()
+
+    return hashlib.md5(
+        f"{data_to_cache}{req_params if req_params else ''}".encode()
+    ).hexdigest()
 
 
 def gen_key(prefix_key: str, req: Request | None = None) -> str:
@@ -110,20 +123,8 @@ def gen_key(prefix_key: str, req: Request | None = None) -> str:
     keys = [prefix_key]
 
     if req:
-        keys.append(gen_hash_from_req_get(req=req))
+        keys.append(gen_hash_from_req(req=req))
     return ":".join(keys)
-
-
-def gen_etag(cached_value: str) -> str:
-    """Generate ETag from cached value.
-
-    Args:
-        cached_value (str): Cached data string.
-
-    Returns:
-        str: Weak ETag generated from cached value.
-    """
-    return f"W/{hash(cached_value)}"
 
 
 async def get_cache(cache_key: str) -> str | None:
@@ -162,6 +163,24 @@ async def set_cache(cache_key, value, ex) -> None:
             ex=ex,
         )
 
+    except aioredis.RedisError as e:
+        raise e
+
+
+async def get_cache_ttl(cache_key: str) -> int:
+    """Retrieve TTL (time-to-live) for a cache key.
+
+    Args:
+        cache_key (str): The key for which TTL is requested.
+
+    Returns:
+    int: Remaining time in seconds. Returns -1 if the key has no expiration,
+             and -2 if the key does not exist.
+    """
+    redis_client: Redis = await setup_redis()
+    try:
+        ttl = await redis_client.ttl(cache_key)
+        return ttl
     except aioredis.RedisError as e:
         raise e
 
@@ -205,7 +224,6 @@ def cache_count_limit_http_request_for_positive_response(
             func_volume = await function(*args, **kwargs)
 
             if func_volume:
-
                 limit_volume = (
                     IntKeys.FIRST_MATCH + int(cached_value)
                     if cached_value
@@ -218,6 +236,56 @@ def cache_count_limit_http_request_for_positive_response(
             return func_volume
 
         update_wrapper(_wrapper, function)
+
+        return _wrapper
+
+    return _decorator
+
+
+def cache_list_location(expire: int, prefix_key: str) -> Callable:
+    """Cache decorator for POST api/location."""
+
+    def _decorator(function: Callable) -> Callable:
+        return_type = get_typed_return_annotation(function)
+
+        @wraps(function)
+        async def _wrapper(*args: Any, **kwargs: Any):
+            request, response = await select_request_and_response(**kwargs)
+
+            cache_key = gen_key(prefix_key=prefix_key, req=request)
+
+            cached_value = await get_cache(cache_key=cache_key)
+
+            if cached_value is None:
+                data_response = await function(*args, **kwargs)
+
+                cached_value = serialize_data(data_response)
+
+                await set_cache(
+                    cache_key=cache_key, value=cached_value, ex=expire
+                )
+                set_response_headers(response, expire, cached_value)
+
+                return data_response
+
+            else:
+                exp = await get_cache_ttl(cache_key=cache_key)
+
+                set_response_headers(
+                    response=response,
+                    exp=exp,
+                    cached_value=cached_value,
+                    update=True,
+                )
+
+                if check_etag(request=request, response=response):
+                    return Response(status_code=HTTP_304_NOT_MODIFIED)
+
+                data_response = deserialize_data(
+                    data=cached_value, return_type=return_type
+                )
+
+                return data_response
 
         return _wrapper
 

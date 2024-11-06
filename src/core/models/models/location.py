@@ -25,11 +25,13 @@ class LocationORM(BaseModel):
         Geography(geometry_type=LocationH3.GEOMETRY_TYPE, srid=LocationH3.SRID)
     )
 
+    h3_index_9: Mapped[id] = mapped_column(BigInteger)
     h3_index_8: Mapped[id] = mapped_column(BigInteger)
     h3_index_7: Mapped[id] = mapped_column(BigInteger)
     h3_index_6: Mapped[id] = mapped_column(BigInteger)
     h3_index_5: Mapped[id] = mapped_column(BigInteger)
     h3_index_4: Mapped[id] = mapped_column(BigInteger)
+    h3_index_3: Mapped[id] = mapped_column(BigInteger)
 
     __table_args__ = (
         Index(

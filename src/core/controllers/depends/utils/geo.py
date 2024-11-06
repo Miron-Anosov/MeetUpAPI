@@ -13,10 +13,18 @@ def select_h3_resolution_params(radius: float, exact: bool) -> H3Parameters:
     """Choice params H3 by radius."""
     if exact:
         return H3Parameters(
-            resolution=LocationH3.H3_RESOLUTION_8,
-            diameter=LocationH3.H3_MAX_DIAMETER_8,
+            resolution=LocationH3.H3_RESOLUTION_9,
+            diameter=LocationH3.H3_MAX_DIAMETER_9,
             field_name=LocationH3.FIELD_H3_INDEX.format(
-                LocationH3.H3_RESOLUTION_8
+                LocationH3.H3_RESOLUTION_9
+            ),
+        )
+    if radius <= LocationH3.H3_MAX_DIAMETER_9:
+        return H3Parameters(
+            resolution=LocationH3.H3_RESOLUTION_9,
+            diameter=LocationH3.H3_MAX_DIAMETER_9,
+            field_name=LocationH3.FIELD_H3_INDEX.format(
+                LocationH3.H3_RESOLUTION_9
             ),
         )
 
@@ -46,13 +54,30 @@ def select_h3_resolution_params(radius: float, exact: bool) -> H3Parameters:
                 LocationH3.H3_RESOLUTION_6
             ),
         )
-
-    else:
+    elif radius <= LocationH3.H3_MAX_DIAMETER_5:
         return H3Parameters(
             resolution=LocationH3.H3_RESOLUTION_5,
             diameter=LocationH3.H3_MAX_DIAMETER_5,
             field_name=LocationH3.FIELD_H3_INDEX.format(
                 LocationH3.H3_RESOLUTION_5
+            ),
+        )
+
+    elif radius <= LocationH3.H3_MAX_DIAMETER_4:
+        return H3Parameters(
+            resolution=LocationH3.H3_RESOLUTION_4,
+            diameter=LocationH3.H3_MAX_DIAMETER_4,
+            field_name=LocationH3.FIELD_H3_INDEX.format(
+                LocationH3.H3_RESOLUTION_4
+            ),
+        )
+
+    else:
+        return H3Parameters(
+            resolution=LocationH3.H3_RESOLUTION_3,
+            diameter=LocationH3.H3_MAX_DIAMETER_3,
+            field_name=LocationH3.FIELD_H3_INDEX.format(
+                LocationH3.H3_RESOLUTION_3
             ),
         )
 
