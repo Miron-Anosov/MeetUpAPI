@@ -282,12 +282,6 @@ class Headers:
     IF_NONE_MATCH = "if-none-match"
 
 
-class Prefix:
-    """Prefix."""
-
-    API = "/api"
-
-
 class CommonConfSettings:
     """Common configurate."""
 

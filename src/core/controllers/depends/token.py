@@ -11,10 +11,11 @@ from src.core.controllers.depends.utils.jsonresponse_new_jwt import (
 )
 from src.core.controllers.depends.utils.jwt_token import decode_jwt
 from src.core.controllers.depends.utils.response_errors import raise_http_401
-from src.core.settings.constants import JWT, AuthRoutes, Prefix
+from src.core.settings.constants import JWT, AuthRoutes
+from src.core.settings.env import settings
 
 oauth_bearer = OAuth2PasswordBearer(
-    tokenUrl=f"{Prefix.API}{AuthRoutes.LOGIN_PATH}",
+    tokenUrl=f"{settings.webconf.PREFIX_API}{AuthRoutes.LOGIN_PATH}",
 )
 
 cookie_refresh = APIKeyCookie(name=JWT.TOKEN_TYPE_REFRESH)

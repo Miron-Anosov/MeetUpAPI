@@ -15,7 +15,6 @@ from src.core.controllers.depends.utils.redis_chash import (
     init_redis,
 )
 from src.core.controllers.locations import location
-from src.core.settings.constants import Prefix
 from src.core.settings.env import settings
 
 
@@ -35,12 +34,12 @@ def create_app() -> FastAPI:
     """Maker FastAPI."""
     app_ = FastAPI(
         lifespan=lifespan,
-        root_path=Prefix.API,
+        root_path=settings.webconf.PREFIX_API,
     )
 
     app_.add_middleware(
         CORSMiddleware,  # noqa
-        allow_origins=settings.web_security.allowed_origins(),
+        allow_origins=settings.webconf.allowed_origins(),
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
