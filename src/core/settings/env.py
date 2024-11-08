@@ -137,6 +137,16 @@ class GunicornENV(EnvironmentSetting):
     ERRORLOG: str
 
 
+class WebSecurityConfig:
+    """Conf CORS from environment."""
+
+    ALLOWED_ORIGINS: str
+
+    def allowed_origins(self) -> list[str]:
+        """Return allowed origins."""
+        return self.ALLOWED_ORIGINS.split(",")
+
+
 class Settings:
     """Common settings for environments."""
 
@@ -149,6 +159,7 @@ class Settings:
         self.wm = WatterMark()
         self.email = EmailEnv()
         self.gunicorn = GunicornENV()
+        self.web_security = WebSecurityConfig()
 
 
 settings = Settings()

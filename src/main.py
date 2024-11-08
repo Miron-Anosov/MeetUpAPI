@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from src.core.apps.app_celery import check_redis_connection
 from src.core.controllers.auth import auth
@@ -15,6 +16,7 @@ from src.core.controllers.depends.utils.redis_chash import (
 )
 from src.core.controllers.locations import location
 from src.core.settings.constants import Prefix
+from src.core.settings.env import settings
 
 
 @asynccontextmanager
@@ -35,6 +37,15 @@ def create_app() -> FastAPI:
         lifespan=lifespan,
         root_path=Prefix.API,
     )
+
+    app_.add_middleware(
+        CORSMiddleware,  # noqa
+        allow_origins=settings.web_security.allowed_origins(),
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
     app_.include_router(clients)
     app_.include_router(auth)
     app_.include_router(location)

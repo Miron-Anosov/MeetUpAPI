@@ -70,9 +70,6 @@ services:
 
 
   api_backend:
-    build:
-      dockerfile: Dockerfile
-      context: ./
     container_name: ${CONTAINER_NAME_API}
     restart: always
     image: ${IMAGE_API}:${VERSION_API}
