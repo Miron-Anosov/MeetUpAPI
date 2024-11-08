@@ -1,4 +1,4 @@
-FROM python:3.12.4 AS builder
+FROM python:3.12.4-slim AS builder
 LABEL authors="mairon26rus@gmail.com"
 
 WORKDIR /app
@@ -26,7 +26,7 @@ COPY alembic /app/alembic
 COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
 
-FROM python:3.12.4
+FROM python:3.12.4-slim
 WORKDIR /app/
 
 COPY --from=builder /app /app
